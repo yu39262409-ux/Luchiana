@@ -3,200 +3,285 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>청소년 민원 제안 앱</title>
+<title>청소년 민원 제안 플랫폼</title>
 
 <style>
 body{
     font-family: Arial, sans-serif;
-    max-width: 900px;
-    margin: 20px auto;
-    padding: 20px;
-    background-color: #f4f6f9;
+    background:#f4f6f9;
+    margin:0;
+    padding:20px;
+}
+
+.container{
+    max-width:900px;
+    margin:auto;
 }
 
 h1{
-    text-align: center;
+    text-align:center;
+    color:#333;
 }
 
-.form-box{
-    background: white;
-    padding: 20px;
-    border-radius: 10px;
-    margin-bottom: 20px;
+.box{
+    background:white;
+    padding:20px;
+    border-radius:12px;
+    margin-bottom:20px;
+    box-shadow:0 2px 8px rgba(0,0,0,0.1);
 }
 
 input, select, textarea{
-    width: 100%;
-    padding: 10px;
-    margin-top: 10px;
-    margin-bottom: 15px;
-    box-sizing: border-box;
+    width:100%;
+    padding:10px;
+    margin-top:10px;
+    margin-bottom:10px;
+    box-sizing:border-box;
+    border:1px solid #ccc;
+    border-radius:6px;
 }
 
 button{
-    padding: 10px 15px;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
+    padding:10px 15px;
+    border:none;
+    border-radius:6px;
+    cursor:pointer;
+    margin-top:5px;
 }
 
 .register{
-    background-color: #4CAF50;
-    color: white;
+    background:#4CAF50;
+    color:white;
 }
 
 .agree{
-    background-color: #2196F3;
-    color: white;
+    background:#2196F3;
+    color:white;
 }
 
 .disagree{
-    background-color: #f44336;
-    color: white;
+    background:#f44336;
+    color:white;
+}
+
+.delete{
+    background:#555;
+    color:white;
 }
 
 .card{
-    background: white;
-    padding: 15px;
-    border-radius: 10px;
-    margin-bottom: 15px;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-}
-
-.rank-box{
     background:white;
     padding:15px;
+    margin-bottom:15px;
     border-radius:10px;
-    margin-bottom:20px;
+    box-shadow:0 2px 5px rgba(0,0,0,0.1);
+}
+
+.time{
+    color:gray;
+    font-size:13px;
+}
+
+.badge{
+    display:inline-block;
+    background:#eee;
+    padding:4px 8px;
+    border-radius:10px;
+    margin-bottom:10px;
 }
 </style>
 
 </head>
 <body>
 
-<h1>🏛 청소년 민원 제안 앱</h1>
+<div class="container">
 
-<div class="form-box">
+<h1>🏛 청소년 민원 제안 플랫폼</h1>
 
+<div class="box">
 <h2>민원 작성</h2>
 
-<input type="text" id="title" placeholder="민원 제목">
+<input type="text" id="title" placeholder="민원 제목 입력">
 
 <select id="category">
-    <option>학교</option>
-    <option>교통</option>
-    <option>환경</option>
-    <option>안전</option>
-    <option>기타</option>
+<option>학교</option>
+<option>교통</option>
+<option>환경</option>
+<option>안전</option>
+<option>복지</option>
+<option>기타</option>
 </select>
 
 <textarea id="content" rows="5" placeholder="민원 내용을 입력하세요"></textarea>
 
-<button class="register" onclick="addPost()">등록하기</button>
-
+<button class="register" onclick="addPost()">민원 등록</button>
 </div>
 
-<div class="rank-box">
+<div class="box">
 <h2>🔥 인기 민원 TOP 3</h2>
-<div id="topPosts">아직 등록된 민원이 없습니다.</div>
+<div id="ranking">등록된 민원이 없습니다.</div>
 </div>
 
-<h2>📋 민원 목록</h2>
+<h2>📋 전체 민원 목록</h2>
+<div id="posts"></div>
 
-<div id="postList"></div>
+</div>
 
 <script>
 
-let posts = [];
+let posts = JSON.parse(localStorage.getItem("posts")) || [];
+
+function saveData(){
+    localStorage.setItem("posts", JSON.stringify(posts));
+}
 
 function addPost(){
 
-    const title = document.getElementById("title").value;
-    const category = document.getElementById("category").value;
-    const content = document.getElementById("content").value;
+    const title =
+    document.getElementById("title").value.trim();
 
-    if(title.trim()==="" || content.trim()===""){
-        alert("제목과 내용을 입력해주세요.");
+    const category =
+    document.getElementById("category").value;
+
+    const content =
+    document.getElementById("content").value.trim();
+
+    if(title === "" || content === ""){
+        alert("제목과 내용을 모두 입력해주세요.");
         return;
     }
 
-    posts.push({
+    const post = {
         title:title,
         category:category,
         content:content,
         agree:0,
-        disagree:0
-    });
+        disagree:0,
+        date:new Date().toLocaleString("ko-KR")
+    };
 
-    document.getElementById("title").value="";
-    document.getElementById("content").value="";
+    posts.unshift(post);
 
-    displayPosts();
+    saveData();
+
+    document.getElementById("title").value = "";
+    document.getElementById("content").value = "";
+
+    render();
 }
 
-function displayPosts(){
-
-    const postList = document.getElementById("postList");
-
-    postList.innerHTML="";
-
-    posts.forEach((post,index)=>{
-
-        postList.innerHTML += `
-        <div class="card">
-            <h3>${post.title}</h3>
-            <p><strong>분야:</strong> ${post.category}</p>
-            <p>${post.content}</p>
-
-            <button class="agree" onclick="agreeVote(${index})">
-            👍 찬성 (${post.agree})
-            </button>
-
-            <button class="disagree" onclick="disagreeVote(${index})">
-            👎 반대 (${post.disagree})
-            </button>
-        </div>
-        `;
-    });
-
-    updateRanking();
-}
-
-function agreeVote(index){
+function voteAgree(index){
     posts[index].agree++;
-    displayPosts();
+    saveData();
+    render();
 }
 
-function disagreeVote(index){
+function voteDisagree(index){
     posts[index].disagree++;
-    displayPosts();
+    saveData();
+    render();
+}
+
+function deletePost(index){
+
+    const result =
+    confirm("이 민원을 삭제하시겠습니까?");
+
+    if(result){
+        posts.splice(index,1);
+        saveData();
+        render();
+    }
 }
 
 function updateRanking(){
 
-    const topDiv = document.getElementById("topPosts");
+    const ranking =
+    document.getElementById("ranking");
 
-    if(posts.length===0){
-        topDiv.innerHTML="아직 등록된 민원이 없습니다.";
+    if(posts.length === 0){
+        ranking.innerHTML =
+        "등록된 민원이 없습니다.";
         return;
     }
 
-    const sorted = [...posts].sort((a,b)=>b.agree-a.agree);
+    const sorted =
+    [...posts].sort(
+        (a,b)=>b.agree-a.agree
+    );
 
-    let html="";
+    let html = "";
 
     sorted.slice(0,3).forEach((post,i)=>{
 
         html += `
         <p>
-        ${i+1}위 - ${post.title}
+        ${i+1}위 🏆
+        <strong>${post.title}</strong>
         (찬성 ${post.agree}표)
         </p>
         `;
     });
 
-    topDiv.innerHTML = html;
+    ranking.innerHTML = html;
 }
+
+function render(){
+
+    const postArea =
+    document.getElementById("posts");
+
+    if(posts.length === 0){
+        postArea.innerHTML =
+        "<div class='card'>아직 등록된 민원이 없습니다.</div>";
+        updateRanking();
+        return;
+    }
+
+    let html = "";
+
+    posts.forEach((post,index)=>{
+
+        html += `
+        <div class="card">
+
+        <span class="badge">
+        ${post.category}
+        </span>
+
+        <h3>${post.title}</h3>
+
+        <p>${post.content}</p>
+
+        <p class="time">
+        등록일 : ${post.date}
+        </p>
+
+        <button class="agree"
+        onclick="voteAgree(${index})">
+        👍 찬성 ${post.agree}
+        </button>
+
+        <button class="disagree"
+        onclick="voteDisagree(${index})">
+        👎 반대 ${post.disagree}
+        </button>
+
+        <button class="delete"
+        onclick="deletePost(${index})">
+        🗑 삭제
+        </button>
+
+        </div>
+        `;
+    });
+
+    postArea.innerHTML = html;
+
+    updateRanking();
+}
+
+render();
 
 </script>
 
