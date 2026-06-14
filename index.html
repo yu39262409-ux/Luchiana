@@ -114,7 +114,10 @@ button{
 
 <textarea id="content" rows="5" placeholder="민원 내용을 입력하세요"></textarea>
 
-<button class="register" onclick="addPost()">민원 등록</button>
+<button class="register" onclick="addPost()">
+민원 등록
+</button>
+
 </div>
 
 <div class="box">
@@ -137,37 +140,33 @@ function saveData(){
 
 function addPost(){
 
-    const title =
-    document.getElementById("title").value.trim();
+    alert("버튼 클릭됨");
 
-    const category =
-    document.getElementById("category").value;
-
-    const content =
-    document.getElementById("content").value.trim();
+    const title = document.getElementById("title").value.trim();
+    const category = document.getElementById("category").value;
+    const content = document.getElementById("content").value.trim();
 
     if(title === "" || content === ""){
         alert("제목과 내용을 모두 입력해주세요.");
         return;
     }
 
-    const post = {
+    posts.unshift({
         title:title,
         category:category,
         content:content,
         agree:0,
         disagree:0,
         date:new Date().toLocaleString("ko-KR")
-    };
-
-    posts.unshift(post);
+    });
 
     saveData();
+    render();
 
     document.getElementById("title").value = "";
     document.getElementById("content").value = "";
 
-    render();
+    alert("민원이 등록되었습니다.");
 }
 
 function voteAgree(index){
@@ -184,31 +183,24 @@ function voteDisagree(index){
 
 function deletePost(index){
 
-    const result =
-    confirm("이 민원을 삭제하시겠습니까?");
-
-    if(result){
+    if(confirm("삭제하시겠습니까?")){
         posts.splice(index,1);
         saveData();
         render();
     }
+
 }
 
 function updateRanking(){
 
-    const ranking =
-    document.getElementById("ranking");
+    const ranking = document.getElementById("ranking");
 
     if(posts.length === 0){
-        ranking.innerHTML =
-        "등록된 민원이 없습니다.";
+        ranking.innerHTML = "등록된 민원이 없습니다.";
         return;
     }
 
-    const sorted =
-    [...posts].sort(
-        (a,b)=>b.agree-a.agree
-    );
+    const sorted = [...posts].sort((a,b)=>b.agree-a.agree);
 
     let html = "";
 
@@ -228,8 +220,7 @@ function updateRanking(){
 
 function render(){
 
-    const postArea =
-    document.getElementById("posts");
+    const postArea = document.getElementById("posts");
 
     if(posts.length === 0){
         postArea.innerHTML =
@@ -245,9 +236,7 @@ function render(){
         html += `
         <div class="card">
 
-        <span class="badge">
-        ${post.category}
-        </span>
+        <span class="badge">${post.category}</span>
 
         <h3>${post.title}</h3>
 
@@ -257,18 +246,15 @@ function render(){
         등록일 : ${post.date}
         </p>
 
-        <button class="agree"
-        onclick="voteAgree(${index})">
+        <button class="agree" onclick="voteAgree(${index})">
         👍 찬성 ${post.agree}
         </button>
 
-        <button class="disagree"
-        onclick="voteDisagree(${index})">
+        <button class="disagree" onclick="voteDisagree(${index})">
         👎 반대 ${post.disagree}
         </button>
 
-        <button class="delete"
-        onclick="deletePost(${index})">
+        <button class="delete" onclick="deletePost(${index})">
         🗑 삭제
         </button>
 
