@@ -26,7 +26,6 @@
             min-height: 100vh;
         }
 
-        /* 헤더 */
         .header {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
@@ -45,7 +44,6 @@
             opacity: 0.9;
         }
 
-        /* 네비게이션 */
         .navbar {
             display: flex;
             gap: 10px;
@@ -463,6 +461,7 @@
             color: white;
             font-weight: 600;
             transition: width 0.5s ease;
+            min-width: 50px;
         }
 
         .progress-fill.agree {
@@ -680,11 +679,92 @@
     <script>
         class ComplaintManager {
             constructor() {
+                this.loadData();
+                this.initializeSampleData();
+            }
+
+            loadData() {
                 this.complaints = JSON.parse(localStorage.getItem('complaints')) || [];
                 this.votes = JSON.parse(localStorage.getItem('votes')) || {};
             }
-            saveComplaints() { localStorage.setItem('complaints', JSON.stringify(this.complaints)); }
-            saveVotes() { localStorage.setItem('votes', JSON.stringify(this.votes)); }
+
+            initializeSampleData() {
+                if (this.complaints.length === 0) {
+                    const sampleComplaints = [
+                        {
+                            id: 1000,
+                            category: '교육',
+                            title: '학교 급식의 질 개선이 필요합니다',
+                            content: '현재 학교 급식의 질이 많이 떨어지고 있습니다. 신선한 식재료를 사용하고, 영양가 있는 메뉴 개발이 필요합니다. 학생들의 건강을 위해 급식 시스템 개선을 건의합니다.',
+                            nickname: '행복한학생',
+                            createdAt: '2026-06-15 14:30',
+                            agree: 23,
+                            disagree: 5
+                        },
+                        {
+                            id: 1001,
+                            category: '학교',
+                            title: '학교 휴식 시간을 더 늘려주세요',
+                            content: '수업 시간이 너무 길어서 학생들의 집중력이 떨어집니다. 휴식 시간을 10분 더 늘려서 학생들이 충분히 쉴 수 있도록 해주세요. 이렇게 되면 다음 수업에 더 집중할 수 있을 것 같습니다.',
+                            nickname: '피곤한청소년',
+                            createdAt: '2026-06-14 10:15',
+                            agree: 45,
+                            disagree: 8
+                        },
+                        {
+                            id: 1002,
+                            category: '환경',
+                            title: '학교 주변 환경 정화 운동을 시작해야 합니다',
+                            content: '학교 주변이 쓰레기로 가득 차 있습니다. 정기적인 환경 정화 운동과 재활용 캠페인을 진행해주세요. 우리 모두의 깨끗한 환경을 위해 함께 노력해야 합니다.',
+                            nickname: '환경사랑',
+                            createdAt: '2026-06-13 16:45',
+                            agree: 67,
+                            disagree: 3
+                        },
+                        {
+                            id: 1003,
+                            category: '안전',
+                            title: '등하교 길 보안 카메라 설치를 요청합니다',
+                            content: '등하교 길에 보안 카메라가 부족합니다. 학생 안전을 위해 어두운 골목길과 위험 지역에 CCTV를 설치해주세요. 이것은 학생들의 안전을 지키는 중요한 조치입니다.',
+                            nickname: '안전제일',
+                            createdAt: '2026-06-12 09:00',
+                            agree: 34,
+                            disagree: 2
+                        },
+                        {
+                            id: 1004,
+                            category: '문화',
+                            title: '더 많은 청소년 문화 공간이 필요합니다',
+                            content: '청소년들이 자유롭게 모일 수 있는 문화 공간이 부족합니다. 각 지역에 청소년 센터나 카페 같은 편의 시설을 확충해주세요. 청소년들의 건전한 여가 활동을 위해 필요합니다.',
+                            nickname: '문화애호가',
+                            createdAt: '2026-06-11 13:20',
+                            agree: 56,
+                            disagree: 7
+                        }
+                    ];
+
+                    this.complaints = sampleComplaints;
+                    this.saveComplaints();
+
+                    sampleComplaints.forEach(complaint => {
+                        this.votes[complaint.id] = {
+                            agree: complaint.agree,
+                            disagree: complaint.disagree,
+                            voted: false
+                        };
+                    });
+                    this.saveVotes();
+                }
+            }
+
+            saveComplaints() {
+                localStorage.setItem('complaints', JSON.stringify(this.complaints));
+            }
+
+            saveVotes() {
+                localStorage.setItem('votes', JSON.stringify(this.votes));
+            }
+
             addComplaint(complaint) {
                 const newComplaint = {
                     id: Date.now(),
@@ -695,15 +775,29 @@
                 };
                 this.complaints.unshift(newComplaint);
                 this.saveComplaints();
+                this.votes[newComplaint.id] = { agree: 0, disagree: 0, voted: false };
+                this.saveVotes();
                 return newComplaint;
             }
-            getComplaintById(id) { return this.complaints.find(c => c.id === id); }
+
+            getComplaintById(id) {
+                return this.complaints.find(c => c.id === id);
+            }
+
             addVote(complaintId, voteType) {
-                if (!this.votes[complaintId]) this.votes[complaintId] = { agree: 0, disagree: 0, voted: false };
-                if (voteType === 'agree') this.votes[complaintId].agree++;
-                else this.votes[complaintId].disagree++;
+                if (!this.votes[complaintId]) {
+                    this.votes[complaintId] = { agree: 0, disagree: 0, voted: false };
+                }
+
+                if (voteType === 'agree') {
+                    this.votes[complaintId].agree++;
+                } else if (voteType === 'disagree') {
+                    this.votes[complaintId].disagree++;
+                }
+
                 this.votes[complaintId].voted = true;
                 this.saveVotes();
+
                 const complaint = this.getComplaintById(complaintId);
                 if (complaint) {
                     complaint.agree = this.votes[complaintId].agree;
@@ -711,7 +805,10 @@
                     this.saveComplaints();
                 }
             }
-            getVoteStats(complaintId) { return this.votes[complaintId] || { agree: 0, disagree: 0, voted: false }; }
+
+            getVoteStats(complaintId) {
+                return this.votes[complaintId] || { agree: 0, disagree: 0, voted: false };
+            }
         }
 
         const manager = new ComplaintManager();
@@ -741,6 +838,8 @@
             document.getElementById('contentCount').textContent = '0/500자';
             alert('민원이 성공적으로 등록되었습니다! 🎉');
             displayComplaints();
+            filteredComplaints = [...manager.complaints];
+            displayStatistics();
         });
 
         document.getElementById('title').addEventListener('input', function() {
@@ -757,7 +856,9 @@
             const listContainer = document.getElementById('complaintList');
             filteredComplaints = [...manager.complaints];
             const categoryFilter = document.getElementById('filterCategory').value;
-            if (categoryFilter) filteredComplaints = filteredComplaints.filter(c => c.category === categoryFilter);
+            if (categoryFilter) {
+                filteredComplaints = filteredComplaints.filter(c => c.category === categoryFilter);
+            }
             sortComplaints();
             if (filteredComplaints.length === 0) {
                 listContainer.innerHTML = '<p class="empty-message">등록된 민원이 없습니다!</p>';
@@ -780,13 +881,19 @@
             `).join('');
         }
 
-        function filterComplaints() { displayComplaints(); }
+        function filterComplaints() {
+            displayComplaints();
+        }
 
         function sortComplaints() {
             const sortBy = document.getElementById('sortBy').value;
-            if (sortBy === 'recent') filteredComplaints.sort((a, b) => b.id - a.id);
-            else if (sortBy === 'popular') filteredComplaints.sort((a, b) => (b.agree + b.disagree) - (a.agree + a.disagree));
-            else if (sortBy === 'agree') filteredComplaints.sort((a, b) => b.agree - a.agree);
+            if (sortBy === 'recent') {
+                filteredComplaints.sort((a, b) => b.id - a.id);
+            } else if (sortBy === 'popular') {
+                filteredComplaints.sort((a, b) => (b.agree + b.disagree) - (a.agree + a.disagree));
+            } else if (sortBy === 'agree') {
+                filteredComplaints.sort((a, b) => b.agree - a.agree);
+            }
             displayComplaints();
         }
 
@@ -853,13 +960,17 @@
 
             const categoryStats = {};
             manager.complaints.forEach(complaint => {
-                if (!categoryStats[complaint.category]) categoryStats[complaint.category] = { total: 0, agree: 0, disagree: 0 };
+                if (!categoryStats[complaint.category]) {
+                    categoryStats[complaint.category] = { total: 0, agree: 0, disagree: 0 };
+                }
                 categoryStats[complaint.category].total++;
                 categoryStats[complaint.category].agree += complaint.agree;
                 categoryStats[complaint.category].disagree += complaint.disagree;
             });
 
-            const topComplaints = [...manager.complaints].sort((a, b) => (b.agree + b.disagree) - (a.agree + a.disagree)).slice(0, 5);
+            const topComplaints = [...manager.complaints]
+                .sort((a, b) => (b.agree + b.disagree) - (a.agree + a.disagree))
+                .slice(0, 5);
 
             statsContainer.innerHTML = `
                 <div class="stat-card">
