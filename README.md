@@ -4,34 +4,560 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>청소년 민원 플랫폼</title>
-    <link rel="stylesheet" href="styles.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f5f7fa;
+            color: #333;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        /* 헤더 */
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 40px 20px;
+            text-align: center;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+
+        /* 네비게이션 */
+        .navbar {
+            display: flex;
+            gap: 10px;
+            padding: 20px;
+            background-color: white;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .nav-btn {
+            padding: 10px 20px;
+            border: 2px solid #667eea;
+            background: white;
+            color: #667eea;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .nav-btn:hover {
+            background-color: #667eea;
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+        }
+
+        .nav-btn.active {
+            background-color: #667eea;
+            color: white;
+        }
+
+        .main-content {
+            flex: 1;
+            padding: 40px 20px;
+        }
+
+        .section {
+            display: none;
+            animation: fadeIn 0.3s ease-in;
+        }
+
+        .section.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .section-header {
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .section-header h2 {
+            font-size: 2rem;
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .section-header p {
+            color: #666;
+            font-size: 1.1rem;
+        }
+
+        .welcome-box {
+            background: white;
+            padding: 40px;
+            border-radius: 10px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .welcome-box h2 {
+            font-size: 1.8rem;
+            color: #667eea;
+            margin-bottom: 15px;
+        }
+
+        .welcome-box p {
+            font-size: 1.05rem;
+            color: #555;
+            margin-bottom: 30px;
+            line-height: 1.8;
+        }
+
+        .info-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin: 30px 0;
+        }
+
+        .info-card {
+            background: linear-gradient(135deg, #667eea15 0%, #764ba215 100%);
+            padding: 20px;
+            border-radius: 8px;
+            border-left: 4px solid #667eea;
+        }
+
+        .info-card h3 {
+            color: #667eea;
+            margin-bottom: 10px;
+        }
+
+        .info-card p {
+            color: #666;
+            font-size: 0.95rem;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            display: inline-block;
+        }
+
+        .btn-primary {
+            background-color: #667eea;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background-color: #5568d3;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+        }
+
+        .btn-agree {
+            background-color: #10b981;
+            color: white;
+        }
+
+        .btn-agree:hover {
+            background-color: #059669;
+        }
+
+        .btn-disagree {
+            background-color: #ef4444;
+            color: white;
+        }
+
+        .btn-disagree:hover {
+            background-color: #dc2626;
+        }
+
+        .btn-large {
+            padding: 15px 40px;
+            font-size: 1.1rem;
+        }
+
+        .form {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e5e7eb;
+            border-radius: 5px;
+            font-size: 1rem;
+            font-family: inherit;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 120px;
+        }
+
+        .form-group small {
+            display: block;
+            margin-top: 5px;
+            color: #999;
+        }
+
+        .filter-box {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+
+        .filter-box select {
+            padding: 10px 15px;
+            border: 2px solid #e5e7eb;
+            border-radius: 5px;
+        }
+
+        .complaint-list {
+            display: grid;
+            gap: 20px;
+        }
+
+        .complaint-card {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08);
+            cursor: pointer;
+            border-left: 4px solid #667eea;
+            transition: all 0.3s ease;
+        }
+
+        .complaint-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
+        }
+
+        .complaint-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: start;
+            margin-bottom: 12px;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .complaint-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #333;
+            margin: 0;
+            flex: 1;
+        }
+
+        .complaint-category {
+            padding: 5px 12px;
+            background-color: #667eea;
+            color: white;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        .complaint-meta {
+            font-size: 0.9rem;
+            color: #666;
+            margin-bottom: 12px;
+        }
+
+        .complaint-content {
+            color: #555;
+            margin-bottom: 15px;
+            line-height: 1.5;
+        }
+
+        .complaint-stats {
+            display: flex;
+            gap: 30px;
+            padding-top: 15px;
+            border-top: 1px solid #e5e7eb;
+            flex-wrap: wrap;
+        }
+
+        .stat {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .stat-number {
+            font-weight: 700;
+            font-size: 1.1rem;
+        }
+
+        .stat-label {
+            color: #999;
+            font-size: 0.9rem;
+        }
+
+        .stat-agree {
+            color: #10b981;
+        }
+
+        .stat-disagree {
+            color: #ef4444;
+        }
+
+        .stat-total {
+            color: #667eea;
+        }
+
+        .empty-message {
+            text-align: center;
+            padding: 60px 20px;
+            color: #999;
+            font-size: 1.1rem;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+        }
+
+        .modal.active {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-content {
+            background-color: white;
+            padding: 30px;
+            border-radius: 10px;
+            max-width: 600px;
+            width: 90%;
+            max-height: 90vh;
+            overflow-y: auto;
+            position: relative;
+        }
+
+        .close {
+            position: absolute;
+            right: 20px;
+            top: 20px;
+            font-size: 28px;
+            cursor: pointer;
+            color: #999;
+        }
+
+        .close:hover {
+            color: #333;
+        }
+
+        .modal-title {
+            font-size: 1.5rem;
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .modal-meta {
+            font-size: 0.9rem;
+            color: #666;
+            margin-bottom: 20px;
+        }
+
+        .vote-section {
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 2px solid #e5e7eb;
+        }
+
+        .vote-buttons {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .vote-buttons .btn {
+            flex: 1;
+            text-align: center;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 25px;
+            background-color: #e5e7eb;
+            border-radius: 5px;
+            overflow: hidden;
+            margin-bottom: 15px;
+        }
+
+        .progress-fill {
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+            transition: width 0.5s ease;
+        }
+
+        .progress-fill.agree {
+            background-color: #10b981;
+        }
+
+        .progress-fill.disagree {
+            background-color: #ef4444;
+        }
+
+        .stats-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 25px;
+            border-radius: 10px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+            border-top: 4px solid #667eea;
+        }
+
+        .stat-card h3 {
+            color: #333;
+            margin-bottom: 20px;
+        }
+
+        .stat-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 12px 0;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .stat-item:last-child {
+            border-bottom: none;
+        }
+
+        .stat-item-label {
+            color: #666;
+        }
+
+        .stat-item-value {
+            font-weight: 700;
+            color: #667eea;
+        }
+
+        .footer {
+            background-color: #333;
+            color: white;
+            text-align: center;
+            padding: 20px;
+            margin-top: 40px;
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 1.8rem;
+            }
+            .navbar {
+                flex-direction: column;
+            }
+            .nav-btn {
+                width: 100%;
+            }
+            .vote-buttons {
+                flex-direction: column;
+            }
+            .modal-content {
+                width: 95%;
+            }
+        }
+    </style>
 </head>
 <body>
     <div class="container">
-        <!-- 헤더 -->
         <header class="header">
-            <div class="header-content">
-                <h1>🏛️ 청소년 민원 플랫폼</h1>
-                <p>청소년의 목소리를 모으는 민주적 참여 공간</p>
-            </div>
+            <h1>🏛️ 청소년 민원 플랫폼</h1>
+            <p>청소년의 목소리를 모으는 민주적 참여 공간</p>
         </header>
 
-        <!-- 네비게이션 -->
         <nav class="navbar">
-            <button class="nav-btn active" onclick="showSection('home')">홈</button>
-            <button class="nav-btn" onclick="showSection('register')">민원 등록</button>
-            <button class="nav-btn" onclick="showSection('list')">민원 목록</button>
-            <button class="nav-btn" onclick="showSection('statistics')">통계</button>
+            <button class="nav-btn active" onclick="showSection('home', event)">홈</button>
+            <button class="nav-btn" onclick="showSection('register', event)">민원 등록</button>
+            <button class="nav-btn" onclick="showSection('list', event)">민원 목록</button>
+            <button class="nav-btn" onclick="showSection('statistics', event)">통계</button>
         </nav>
 
-        <!-- 메인 컨텐츠 -->
         <main class="main-content">
-            <!-- 홈 섹션 -->
             <section id="home" class="section active">
                 <div class="welcome-box">
                     <h2>청소년의 목소리가 중요합니다</h2>
-                    <p>학교, 지역사회, 정책에 대한 여러분의 생각을 나누세요.
-                       찬성과 반대 투표를 통해 청소년들의 진정한 의견을 파악합니다.</p>
+                    <p>학교, 지역사회, 정책에 대한 여러분의 생각을 나누세요.<br>찬성과 반대 투표를 통해 청소년들의 진정한 의견을 파악합니다.</p>
                     
                     <div class="info-cards">
                         <div class="info-card">
@@ -48,13 +574,12 @@
                         </div>
                     </div>
 
-                    <button class="btn btn-primary btn-large" onclick="showSection('register')">
+                    <button class="btn btn-primary btn-large" onclick="showSection('register', event)">
                         첫 민원 등록하기
                     </button>
                 </div>
             </section>
 
-            <!-- 민원 등록 섹션 -->
             <section id="register" class="section">
                 <div class="section-header">
                     <h2>민원 등록</h2>
@@ -85,7 +610,7 @@
 
                     <div class="form-group">
                         <label for="content">민원 내용 *</label>
-                        <textarea id="content" rows="6" placeholder="문제점과 개선안을 상세히 작성해주세요" required></textarea>
+                        <textarea id="content" placeholder="문제점과 개선안을 상세히 작성해주세요" required></textarea>
                         <small id="contentCount">0/500자</small>
                     </div>
 
@@ -95,17 +620,13 @@
                     </div>
 
                     <div class="form-group">
-                        <label>
-                            <input type="checkbox" id="agree" required>
-                            개인정보 수집 및 이용에 동의합니다
-                        </label>
+                        <label><input type="checkbox" id="agree" required> 개인정보 수집 및 이용에 동의합니다</label>
                     </div>
 
                     <button type="submit" class="btn btn-primary">민원 등록하기</button>
                 </form>
             </section>
 
-            <!-- 민원 목록 섹션 -->
             <section id="list" class="section">
                 <div class="section-header">
                     <h2>민원 목록</h2>
@@ -127,46 +648,240 @@
 
                     <select id="sortBy" onchange="sortComplaints()">
                         <option value="recent">최신순</option>
-                        <option value="popular">인기순 (투표 많음)</option>
+                        <option value="popular">인기순</option>
                         <option value="agree">찬성 많음</option>
                     </select>
                 </div>
 
-                <div id="complaintList" class="complaint-list">
-                    <p class="empty-message">등록된 민원이 없습니다. 첫 번째 민원을 등록해주세요!</p>
-                </div>
+                <div id="complaintList" class="complaint-list"></div>
             </section>
 
-            <!-- 통계 섹션 -->
             <section id="statistics" class="section">
                 <div class="section-header">
                     <h2>투표 통계</h2>
                     <p>청소년들의 의견을 데이터로 확인하세요</p>
                 </div>
-
-                <div id="statsContainer" class="stats-container">
-                    <p class="empty-message">아직 투표 데이터가 없습니다.</p>
-                </div>
+                <div id="statsContainer" class="stats-container"></div>
             </section>
         </main>
 
-        <!-- 모달 - 민원 상세보기 및 투표 -->
         <div id="complaintModal" class="modal">
             <div class="modal-content">
                 <span class="close" onclick="closeModal()">&times;</span>
-                
-                <div id="modalBody">
-                    <!-- 동적으로 채워짐 -->
-                </div>
+                <div id="modalBody"></div>
             </div>
         </div>
 
-        <!-- 푸터 -->
         <footer class="footer">
             <p>&copy; 2026 청소년 민원 플랫폼 | 청소년의 민주적 참여를 위하여</p>
         </footer>
     </div>
 
-    <script src="script.js"></script>
+    <script>
+        class ComplaintManager {
+            constructor() {
+                this.complaints = JSON.parse(localStorage.getItem('complaints')) || [];
+                this.votes = JSON.parse(localStorage.getItem('votes')) || {};
+            }
+            saveComplaints() { localStorage.setItem('complaints', JSON.stringify(this.complaints)); }
+            saveVotes() { localStorage.setItem('votes', JSON.stringify(this.votes)); }
+            addComplaint(complaint) {
+                const newComplaint = {
+                    id: Date.now(),
+                    ...complaint,
+                    createdAt: new Date().toLocaleString('ko-KR'),
+                    agree: 0,
+                    disagree: 0
+                };
+                this.complaints.unshift(newComplaint);
+                this.saveComplaints();
+                return newComplaint;
+            }
+            getComplaintById(id) { return this.complaints.find(c => c.id === id); }
+            addVote(complaintId, voteType) {
+                if (!this.votes[complaintId]) this.votes[complaintId] = { agree: 0, disagree: 0, voted: false };
+                if (voteType === 'agree') this.votes[complaintId].agree++;
+                else this.votes[complaintId].disagree++;
+                this.votes[complaintId].voted = true;
+                this.saveVotes();
+                const complaint = this.getComplaintById(complaintId);
+                if (complaint) {
+                    complaint.agree = this.votes[complaintId].agree;
+                    complaint.disagree = this.votes[complaintId].disagree;
+                    this.saveComplaints();
+                }
+            }
+            getVoteStats(complaintId) { return this.votes[complaintId] || { agree: 0, disagree: 0, voted: false }; }
+        }
+
+        const manager = new ComplaintManager();
+        let filteredComplaints = [...manager.complaints];
+
+        function showSection(sectionId, event) {
+            if (event) event.preventDefault();
+            document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+            document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+            document.getElementById(sectionId).classList.add('active');
+            event.target.classList.add('active');
+            if (sectionId === 'list') displayComplaints();
+            if (sectionId === 'statistics') displayStatistics();
+        }
+
+        document.getElementById('complaintForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const complaint = {
+                category: document.getElementById('category').value,
+                title: document.getElementById('title').value,
+                content: document.getElementById('content').value,
+                nickname: document.getElementById('nickname').value
+            };
+            manager.addComplaint(complaint);
+            this.reset();
+            document.getElementById('titleCount').textContent = '0/100자';
+            document.getElementById('contentCount').textContent = '0/500자';
+            alert('민원이 성공적으로 등록되었습니다! 🎉');
+            displayComplaints();
+        });
+
+        document.getElementById('title').addEventListener('input', function() {
+            this.value = this.value.substring(0, 100);
+            document.getElementById('titleCount').textContent = `${this.value.length}/100자`;
+        });
+
+        document.getElementById('content').addEventListener('input', function() {
+            this.value = this.value.substring(0, 500);
+            document.getElementById('contentCount').textContent = `${this.value.length}/500자`;
+        });
+
+        function displayComplaints() {
+            const listContainer = document.getElementById('complaintList');
+            filteredComplaints = [...manager.complaints];
+            const categoryFilter = document.getElementById('filterCategory').value;
+            if (categoryFilter) filteredComplaints = filteredComplaints.filter(c => c.category === categoryFilter);
+            sortComplaints();
+            if (filteredComplaints.length === 0) {
+                listContainer.innerHTML = '<p class="empty-message">등록된 민원이 없습니다!</p>';
+                return;
+            }
+            listContainer.innerHTML = filteredComplaints.map(complaint => `
+                <div class="complaint-card" onclick="openComplaintModal(${complaint.id})">
+                    <div class="complaint-header">
+                        <h3 class="complaint-title">${complaint.title}</h3>
+                        <span class="complaint-category">${complaint.category}</span>
+                    </div>
+                    <div class="complaint-meta">👤 ${complaint.nickname} | 📅 ${complaint.createdAt}</div>
+                    <p class="complaint-content">${complaint.content.substring(0, 100)}...</p>
+                    <div class="complaint-stats">
+                        <div class="stat"><span class="stat-number stat-agree">${complaint.agree}</span> <span class="stat-label">찬성</span></div>
+                        <div class="stat"><span class="stat-number stat-disagree">${complaint.disagree}</span> <span class="stat-label">반대</span></div>
+                        <div class="stat"><span class="stat-number stat-total">${complaint.agree + complaint.disagree}</span> <span class="stat-label">총 투표</span></div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function filterComplaints() { displayComplaints(); }
+
+        function sortComplaints() {
+            const sortBy = document.getElementById('sortBy').value;
+            if (sortBy === 'recent') filteredComplaints.sort((a, b) => b.id - a.id);
+            else if (sortBy === 'popular') filteredComplaints.sort((a, b) => (b.agree + b.disagree) - (a.agree + a.disagree));
+            else if (sortBy === 'agree') filteredComplaints.sort((a, b) => b.agree - a.agree);
+            displayComplaints();
+        }
+
+        function openComplaintModal(complaintId) {
+            const complaint = manager.getComplaintById(complaintId);
+            const stats = manager.getVoteStats(complaintId);
+            const totalVotes = stats.agree + stats.disagree;
+            const agreePercent = totalVotes > 0 ? Math.round((stats.agree / totalVotes) * 100) : 0;
+            const disagreePercent = totalVotes > 0 ? Math.round((stats.disagree / totalVotes) * 100) : 0;
+
+            document.getElementById('modalBody').innerHTML = `
+                <h2 class="modal-title">${complaint.title}</h2>
+                <div class="modal-meta">🏷️ ${complaint.category} | 👤 ${complaint.nickname} | 📅 ${complaint.createdAt}</div>
+                <h3 style="margin-top: 20px; margin-bottom: 10px;">민원 내용</h3>
+                <div style="background-color: #f9f9f9; padding: 15px; border-radius: 5px; margin-bottom: 20px;">${complaint.content}</div>
+                <div class="vote-section">
+                    <h3>🗳️ 투표하기</h3>
+                    <div class="vote-buttons">
+                        <button class="btn btn-agree" onclick="vote(${complaintId}, 'agree')">👍 찬성</button>
+                        <button class="btn btn-disagree" onclick="vote(${complaintId}, 'disagree')">👎 반대</button>
+                    </div>
+                    <h4 style="margin-bottom: 15px;">투표 결과</h4>
+                    <div style="margin-bottom: 15px;">
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 5px; font-weight: 600;">
+                            <span>찬성</span> <span>${stats.agree}표 (${agreePercent}%)</span>
+                        </div>
+                        <div class="progress-bar"><div class="progress-fill agree" style="width: ${agreePercent}%;"></div></div>
+                    </div>
+                    <div>
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 5px; font-weight: 600;">
+                            <span>반대</span> <span>${stats.disagree}표 (${disagreePercent}%)</span>
+                        </div>
+                        <div class="progress-bar"><div class="progress-fill disagree" style="width: ${disagreePercent}%;"></div></div>
+                    </div>
+                    <p style="text-align: center; margin-top: 15px; color: #999;">총 투표: ${totalVotes}명</p>
+                </div>
+            `;
+            document.getElementById('complaintModal').classList.add('active');
+        }
+
+        function vote(complaintId, voteType) {
+            manager.addVote(complaintId, voteType);
+            openComplaintModal(complaintId);
+            displayComplaints();
+            displayStatistics();
+            alert(voteType === 'agree' ? '✅ 찬성 투표했습니다!' : '❌ 반대 투표했습니다!');
+        }
+
+        function closeModal() {
+            document.getElementById('complaintModal').classList.remove('active');
+        }
+
+        window.onclick = function(event) {
+            const modal = document.getElementById('complaintModal');
+            if (event.target === modal) modal.classList.remove('active');
+        }
+
+        function displayStatistics() {
+            const statsContainer = document.getElementById('statsContainer');
+            if (manager.complaints.length === 0) {
+                statsContainer.innerHTML = '<p class="empty-message">아직 투표 데이터가 없습니다.</p>';
+                return;
+            }
+
+            const categoryStats = {};
+            manager.complaints.forEach(complaint => {
+                if (!categoryStats[complaint.category]) categoryStats[complaint.category] = { total: 0, agree: 0, disagree: 0 };
+                categoryStats[complaint.category].total++;
+                categoryStats[complaint.category].agree += complaint.agree;
+                categoryStats[complaint.category].disagree += complaint.disagree;
+            });
+
+            const topComplaints = [...manager.complaints].sort((a, b) => (b.agree + b.disagree) - (a.agree + a.disagree)).slice(0, 5);
+
+            statsContainer.innerHTML = `
+                <div class="stat-card">
+                    <h3>📊 전체 통계</h3>
+                    <div class="stat-item"><span class="stat-item-label">등록된 민원</span> <span class="stat-item-value">${manager.complaints.length}개</span></div>
+                    <div class="stat-item"><span class="stat-item-label">총 투표</span> <span class="stat-item-value">${manager.complaints.reduce((sum, c) => sum + c.agree + c.disagree, 0)}표</span></div>
+                    <div class="stat-item"><span class="stat-item-label">찬성</span> <span class="stat-item-value" style="color: #10b981;">${manager.complaints.reduce((sum, c) => sum + c.agree, 0)}표</span></div>
+                    <div class="stat-item"><span class="stat-item-label">반대</span> <span class="stat-item-value" style="color: #ef4444;">${manager.complaints.reduce((sum, c) => sum + c.disagree, 0)}표</span></div>
+                </div>
+                <div class="stat-card">
+                    <h3>🏆 카테고리별 현황</h3>
+                    ${Object.entries(categoryStats).map(([cat, stats]) => `<div class="stat-item"><span class="stat-item-label">${cat}</span> <span class="stat-item-value">${stats.total}건</span></div>`).join('')}
+                </div>
+                <div class="stat-card">
+                    <h3>⭐ 인기 민원</h3>
+                    ${topComplaints.map(c => `<div class="stat-item"><span class="stat-item-label">${c.title.substring(0, 20)}...</span> <span class="stat-item-value">${c.agree + c.disagree}표</span></div>`).join('')}
+                </div>
+            `;
+        }
+
+        displayComplaints();
+        displayStatistics();
+    </script>
 </body>
 </html>
