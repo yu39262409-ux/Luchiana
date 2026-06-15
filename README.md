@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>청소년 민원 플랫폼</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <!-- 헤더 -->
+        <header class="header">
+            <div class="header-content">
+                <h1>🏛️ 청소년 민원 플랫폼</h1>
+                <p>청소년의 목소리를 모으는 민주적 참여 공간</p>
+            </div>
+        </header>
+
+        <!-- 네비게이션 -->
+        <nav class="navbar">
+            <button class="nav-btn active" onclick="showSection('home')">홈</button>
+            <button class="nav-btn" onclick="showSection('register')">민원 등록</button>
+            <button class="nav-btn" onclick="showSection('list')">민원 목록</button>
+            <button class="nav-btn" onclick="showSection('statistics')">통계</button>
+        </nav>
+
+        <!-- 메인 컨텐츠 -->
+        <main class="main-content">
+            <!-- 홈 섹션 -->
+            <section id="home" class="section active">
+                <div class="welcome-box">
+                    <h2>청소년의 목소리가 중요합니다</h2>
+                    <p>학교, 지역사회, 정책에 대한 여러분의 생각을 나누세요.
+                       찬성과 반대 투표를 통해 청소년들의 진정한 의견을 파악합니다.</p>
+                    
+                    <div class="info-cards">
+                        <div class="info-card">
+                            <h3>📝 민원 등록</h3>
+                            <p>학교 및 사회 문제에 대한 개선 사항을 제안하세요</p>
+                        </div>
+                        <div class="info-card">
+                            <h3>🗳️ 투표</h3>
+                            <p>다른 청소년들의 민원에 찬성/반대 투표하세요</p>
+                        </div>
+                        <div class="info-card">
+                            <h3>📊 결과 확인</h3>
+                            <p>청소년들의 의견 결과를 실시간으로 확인하세요</p>
+                        </div>
+                    </div>
+
+                    <button class="btn btn-primary btn-large" onclick="showSection('register')">
+                        첫 민원 등록하기
+                    </button>
+                </div>
+            </section>
+
+            <!-- 민원 등록 섹션 -->
+            <section id="register" class="section">
+                <div class="section-header">
+                    <h2>민원 등록</h2>
+                    <p>청소년들이 느끼는 문제점과 개선안을 자유롭게 작성해주세요</p>
+                </div>
+
+                <form id="complaintForm" class="form">
+                    <div class="form-group">
+                        <label for="category">카테고리 *</label>
+                        <select id="category" required>
+                            <option value="">선택해주세요</option>
+                            <option value="교육">교육 정책</option>
+                            <option value="학교">학교 생활</option>
+                            <option value="안전">안전 및 보안</option>
+                            <option value="환경">환경</option>
+                            <option value="교통">교통</option>
+                            <option value="문화">문화 및 여가</option>
+                            <option value="복지">청소년 복지</option>
+                            <option value="기타">기타</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="title">민원 제목 *</label>
+                        <input type="text" id="title" placeholder="민원의 제목을 작성해주세요" required>
+                        <small id="titleCount">0/100자</small>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="content">민원 내용 *</label>
+                        <textarea id="content" rows="6" placeholder="문제점과 개선안을 상세히 작성해주세요" required></textarea>
+                        <small id="contentCount">0/500자</small>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="nickname">닉네임 *</label>
+                        <input type="text" id="nickname" placeholder="닉네임을 입력해주세요" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label>
+                            <input type="checkbox" id="agree" required>
+                            개인정보 수집 및 이용에 동의합니다
+                        </label>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary">민원 등록하기</button>
+                </form>
+            </section>
+
+            <!-- 민원 목록 섹션 -->
+            <section id="list" class="section">
+                <div class="section-header">
+                    <h2>민원 목록</h2>
+                    <p>등록된 민원들을 확인하고 투표에 참여하세요</p>
+                </div>
+
+                <div class="filter-box">
+                    <select id="filterCategory" onchange="filterComplaints()">
+                        <option value="">모든 카테고리</option>
+                        <option value="교육">교육 정책</option>
+                        <option value="학교">학교 생활</option>
+                        <option value="안전">안전 및 보안</option>
+                        <option value="환경">환경</option>
+                        <option value="교통">교통</option>
+                        <option value="문화">문화 및 여가</option>
+                        <option value="복지">청소년 복지</option>
+                        <option value="기타">기타</option>
+                    </select>
+
+                    <select id="sortBy" onchange="sortComplaints()">
+                        <option value="recent">최신순</option>
+                        <option value="popular">인기순 (투표 많음)</option>
+                        <option value="agree">찬성 많음</option>
+                    </select>
+                </div>
+
+                <div id="complaintList" class="complaint-list">
+                    <p class="empty-message">등록된 민원이 없습니다. 첫 번째 민원을 등록해주세요!</p>
+                </div>
+            </section>
+
+            <!-- 통계 섹션 -->
+            <section id="statistics" class="section">
+                <div class="section-header">
+                    <h2>투표 통계</h2>
+                    <p>청소년들의 의견을 데이터로 확인하세요</p>
+                </div>
+
+                <div id="statsContainer" class="stats-container">
+                    <p class="empty-message">아직 투표 데이터가 없습니다.</p>
+                </div>
+            </section>
+        </main>
+
+        <!-- 모달 - 민원 상세보기 및 투표 -->
+        <div id="complaintModal" class="modal">
+            <div class="modal-content">
+                <span class="close" onclick="closeModal()">&times;</span>
+                
+                <div id="modalBody">
+                    <!-- 동적으로 채워짐 -->
+                </div>
+            </div>
+        </div>
+
+        <!-- 푸터 -->
+        <footer class="footer">
+            <p>&copy; 2026 청소년 민원 플랫폼 | 청소년의 민주적 참여를 위하여</p>
+        </footer>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
